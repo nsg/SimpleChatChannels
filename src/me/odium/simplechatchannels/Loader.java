@@ -135,6 +135,9 @@ public class Loader extends JavaPlugin {
     this.getCommand("scc").setExecutor(new scc(this));
     this.getCommand("topic").setExecutor(new topic(this));
     this.getCommand("spychan").setExecutor(new spychan(this));
+
+    plugin = this;
+
     log.info("[" + getDescription().getName() + "] " + getDescription().getVersion() + " enabled.");
   }
 
@@ -173,81 +176,73 @@ public class Loader extends JavaPlugin {
     return str;
   }
 
+  public void setChannel(Player player, String channel){
+    InChannel.put(player, true);
+    ChannelMap.put(player, channel);
+    player.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + player.getDisplayName() + ChatColor.DARK_GREEN + " " +channel + " is active");
+  }
+
+  public void joinChannel(Player player, String channel){
+
+    String playerName = player.getName().toLowerCase(); // get the player name
+    Player[] players = Bukkit.getOnlinePlayers(); // get all online players
+    String playerDisplayName = player.getDisplayName();
+
+    setChannel(player, channel);
+
+    List<String> ChList = getStorageConfig().getStringList(channel+".list"); // get the player list
+    ChList.add(playerName);  // add the player to the list
+    getStorageConfig().set(channel+".list", ChList); // set the new list
+    saveStorageConfig();
+
+    // NOTIFY USERS IN CHANNEL OF A JOIN
+    List<String> ChanList = getStorageConfig().getStringList(channel+".list");
+    for(Player op: players){
+      if(ChanList.contains(op.getName().toLowerCase())) {
+        op.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" joined "+ channel);              
+      }
+    }
+    // SHOW TOPIC
+    if (getStorageConfig().getString(channel+".topic") != null) {
+      String topic = getStorageConfig().getString(channel+".topic");
+      player.sendMessage(DARK_GREEN+"[SCC] Topic for " + channel + ": "+ChatColor.WHITE+ topic);
+    }
+
+  }
+
+  public void partChannel(Player player, String channel){
+
+    String playerName = player.getName().toLowerCase(); // get the player name
+    String playerDisplayName = player.getDisplayName();
+    Player[] players = Bukkit.getOnlinePlayers(); // get all online players
+
+    InChannel.remove(player);
+    ChannelMap.remove(player);
+
+    List<String> ChList = getStorageConfig().getStringList(channel+".list"); // get the player list
+    ChList.remove(playerName);  // remove the player from the list
+    getStorageConfig().set(channel+".list", ChList); // set the new list
+    saveStorageConfig();
+
+    // NOTIFY USERS IN CHANNEL OF A PART
+    player.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" left "+ channel);
+    List<String> ChanList = getStorageConfig().getStringList(channel+".list");
+    for(Player play : players){
+      if(ChanList.contains(play.getName())) {
+        play.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" left "+ channel);
+      }
+    }
+
+  }
 
   public void toggleChannel(Player player, String channel){
     if (InChannel.containsKey(player)) { // IF PLAYER IS IN A CHANNEL
-      String playerName = player.getName().toLowerCase(); // get the player name
-      String playerDisplayName = player.getDisplayName();
-      Player[] players = Bukkit.getOnlinePlayers(); // get all online players
-
-      InChannel.remove(player);
-      ChannelMap.remove(player);
-
-      List<String> ChList = getStorageConfig().getStringList(channel+".list"); // get the player list
-      ChList.remove(playerName);  // remove the player from the list
-      getStorageConfig().set(channel+".list", ChList); // se      
-      saveStorageConfig(); 
-
-      // NOTIFY USERS IN CHANNEL OF A PART
-      player.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" left "+ channel);
-      List<String> ChanList = getStorageConfig().getStringList(channel+".list");
-      for(Player play : players){
-        if(ChanList.contains(play.getName())) {
-          play.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" left "+ channel);
-        }
-      }
-
-      //    NOTIFY SERVER OF A CHAT PART
-      if (getConfig().getBoolean("PublicJoinPartMessages") == true) {
-        for (Player user : players) { // for all players
-          if (!InChannel.containsKey(user)) { // if player is not in a channel
-            user.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" has joined general chat");
-          }
-        }
-      }      
-      log.info(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" has joined general chat");
-      
-
+      partChannel(player, channel);
     } else { // if player is not in  a channel
-      String playerName = player.getName().toLowerCase(); // get the player name
-      Player[] players = Bukkit.getOnlinePlayers(); // get all online players
-      String playerDisplayName = player.getDisplayName();
-
-      InChannel.put(player, true);
-      ChannelMap.put(player, channel);
-
-      List<String> ChList = getStorageConfig().getStringList(channel+".list"); // get the player list
-      ChList.add(playerName);  // add the player to the list
-      getStorageConfig().set(channel+".list", ChList); // set the new list
-      saveStorageConfig();
-
-      //      NOTIFY SERVER OF A CHAT JOIN
-      if (getConfig().getBoolean("PublicJoinPartMessages") == true) {
-        for (Player user : players) { // for all players
-          if (!InChannel.containsKey(user)) { // if player is not in a channel
-            user.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" has left general chat");       
-          }
-        }
-        log.info(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" has left general chat");
-      }
-      
-      
-      // NOTIFY USERS IN CHANNEL OF A JOIN
-      List<String> ChanList = getStorageConfig().getStringList(channel+".list"); 
-      for(Player op: players){
-        if(ChanList.contains(op.getName().toLowerCase())) {
-          op.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" joined "+ channel);              
-        }
-      }
-      // SHOW TOPIC
-      if (getStorageConfig().getString(channel+".topic") != null) {
-        String topic = getStorageConfig().getString(channel+".topic");
-        player.sendMessage(DARK_GREEN+"[SCC] Topic for " + channel + ": "+ChatColor.WHITE+ topic);
-      }
-
+      joinChannel(player, channel);
     }
   }
-  
+
   public boolean NotExist(CommandSender sender, String ChanName) {
     sender.sendMessage(DARK_RED+"[SCC] Channel "+ChatColor.GOLD+ChanName+ChatColor.DARK_RED+" does not exist!");
     return true;
@@ -260,7 +255,7 @@ public class Loader extends JavaPlugin {
     sender.sendMessage(DARK_RED+"[SCC] "+ChatColor.DARK_RED+"You are already in a channel");
     return true;
   }
-  
-  
+
+
 
 }

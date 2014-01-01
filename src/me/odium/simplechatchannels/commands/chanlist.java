@@ -1,15 +1,14 @@
 package me.odium.simplechatchannels.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.odium.simplechatchannels.Loader;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class chanlist implements CommandExecutor {   
 
@@ -20,83 +19,153 @@ public class chanlist implements CommandExecutor {
 
 
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)  {
-
     if(args.length == 0) {
-      List<String> ChannelsList = plugin.getStorageConfig().getStringList("Channels"); // create/get the channel list
-      sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"Channel List"+ChatColor.GOLD+" ]");
-//      sender.sendMessage("- Name --- Users --- Topic --");
-      for (String Chan : ChannelsList) {
-        int UserCount = plugin.getStorageConfig().getStringList(Chan+".list").size(); // Count the users in the channel
-        String topic = plugin.getStorageConfig().getString(Chan+".topic");
-        
-        // CHECK TOPIC IS NOT NULL - SHORTEN TOPIC
-        if (topic == null) {
-          topic = " (No Topic Set) ";
-        } else if (topic.length() > 42) {
-          topic = topic.substring(0, 42)+"...";
-        }
-        
-        if (plugin.getStorageConfig().getBoolean(Chan+".locked") == true) {
-          sender.sendMessage(ChatColor.GOLD + "* " + plugin.WHITE + Chan + ("L")+ ChatColor.GOLD+" ["+ChatColor.WHITE+UserCount+ChatColor.GOLD+"] "+"- "+ChatColor.WHITE+topic);
-        } else {
-          sender.sendMessage(ChatColor.GOLD + "* " + plugin.WHITE + Chan + ChatColor.GOLD+" - ["+ChatColor.WHITE+UserCount+ChatColor.GOLD+"] - "+ChatColor.WHITE+topic);
-        }
-      }
-      return true;
-      // FIXED ONLY TO HERE
+      return listAllChannels(sender);
     } else if(args.length == 1) {
-      String ChanName = args[0].toLowerCase();
-      if (!plugin.getStorageConfig().getStringList("Channels").contains(ChanName)) {
-        plugin.NotExist(sender, ChanName);
-        return true;
-      }      
-      java.util.List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // get the player list
-      sender.sendMessage(ChatColor.GOLD + "Channel " + ChanName + "'s" + " User List");
-      for(int i = 0; i < ChList.size(); ++i) {
-        String ChPlayers = ChList.get(i);
-        sender.sendMessage(ChatColor.GOLD+" - "+plugin.WHITE + ChPlayers);          
-      }
-      return true;
-    } else if(args.length == 2 && args[0].contains("-p")) {
-      String playerCheck = plugin.myGetPlayerName(args[1]);
-      Player target = Bukkit.getPlayer(playerCheck);
-      if (plugin.InChannel.containsKey(target)) {
-        String Chan = plugin.ChannelMap.get(target);
-        sender.sendMessage(plugin.DARK_GREEN+ "Player "+ ChatColor.GOLD +playerCheck+plugin.DARK_GREEN+" is in "+ChatColor.GOLD+Chan);
-        return true;
-      } else {
-        sender.sendMessage(plugin.DARK_GREEN+ "Player "+ ChatColor.GOLD +playerCheck+plugin.DARK_GREEN+" is not in a channel");
-        return true;
-      }
-      
-      
-    } else if(args.length == 2 && args[0].contains("-o")) {
-      String ChanName = args[1].toLowerCase();
-      if (!plugin.getStorageConfig().contains(ChanName)) {
-        plugin.NotExist(sender, ChanName);
-        return true;
-      }      
-      List<String> OwList = plugin.getStorageConfig().getStringList(ChanName+".owner"); // create/get the owner list
-      sender.sendMessage(ChatColor.GOLD + "Channel " + ChanName + "'s" + " Owner List");
-      for(int i = 0; i < OwList.size(); ++i) {
-        String ChOwners = OwList.get(i);              
-        sender.sendMessage(ChatColor.GOLD+" - "+plugin.WHITE + ChOwners);          
-      }
-      return true;
-    } else if(args.length == 2 && args[0].contains("-a")) {
-      String ChanName = args[1].toLowerCase();
-      if (!plugin.getStorageConfig().contains(ChanName)) {
-        plugin.NotExist(sender, ChanName);
-        return true;
-      }      
-      List<String> AccList = plugin.getStorageConfig().getStringList(ChanName+".AccList"); // create/get the owner list
-      sender.sendMessage(ChatColor.GOLD + "Channel " + ChanName + "'s" + " Access List");
-      for(int i = 0; i < AccList.size(); ++i) {
-        String ChAccess = AccList.get(i);              
-        sender.sendMessage(ChatColor.GOLD+" - "+plugin.WHITE + ChAccess);          
-      }
-      return true;
-    }       
-    return true;   
+      return listChannel(sender, args);
+    } else if(args.length == 2 && args[0].contains("hasplayer")) {
+      return playerInChannels(sender, args);
+    }
+
+    return false;
   }
+
+  /**
+   * List all channels
+   * @param sender
+   */
+  private boolean listAllChannels(CommandSender sender) {
+    List<String> ChannelsList = plugin.getStorageConfig().getStringList("Channels");
+    sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"Channel List"+ChatColor.GOLD+" ]");
+    ArrayList<String> chanList = new ArrayList<String>();
+
+    for (String chan : ChannelsList) {
+      int UserCount = plugin.getStorageConfig().getStringList(chan+".list").size();
+      String topic = plugin.getStorageConfig().getString(chan+".topic");
+
+      if (topic == null) {
+        topic = " (No Topic Set) ";
+      } else if (topic.length() > 42) {
+        topic = topic.substring(0, 42)+"...";
+      }
+
+      String lock = "";
+      if (plugin.getStorageConfig().getBoolean(chan+".Locked")) {
+        lock = ChatColor.RED + "(L)" + ChatColor.WHITE;
+      }
+
+      chanList.add(plugin.WHITE + chan + lock + ChatColor.GOLD + "["+ChatColor.WHITE + UserCount + ChatColor.GOLD + "]" + " "+ChatColor.WHITE+topic);
+    }
+
+    sender.sendMessage("All channels:");
+    for (String c : chanList) {
+      sender.sendMessage(ChatColor.GOLD + " - " + c);
+    }
+
+    return true;
+  }
+
+  /**
+   * List detailed channel info
+   * @param sender
+   * @param args
+   */
+  private boolean listChannel(CommandSender sender, String[] args) {
+    String ChanName = args[0].toLowerCase();
+
+    if (!plugin.getStorageConfig().getStringList("Channels").contains(ChanName)) {
+      plugin.NotExist(sender, ChanName);
+      return true;
+    }
+
+    ArrayList<String> ownerList = new ArrayList<String>();
+    ArrayList<String> inACL = new ArrayList<String>();
+    ArrayList<String> listPlayer = new ArrayList<String>();
+    ArrayList<String> listPlayerRAW = new ArrayList<String>();
+
+    // Owners of the channel
+    List<String> OwList = plugin.getStorageConfig().getStringList(ChanName+".owner");
+    for(int i = 0; i < OwList.size(); ++i) {
+      String ChOwners = OwList.get(i);
+      ownerList.add(ChOwners);
+    }
+
+    // List ACL
+    List<String> AccList = plugin.getStorageConfig().getStringList(ChanName+".AccList"); // create/get the owner list
+    for(int i = 0; i < AccList.size(); ++i) {
+      String ChAccess = AccList.get(i);
+      inACL.add(ChAccess);
+    }
+
+    // Players in channel
+    java.util.List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list");
+    sender.sendMessage(ChatColor.GOLD + "Channel " + ChanName);
+
+    // List users in channel
+    for (String p : ChList) {
+      if (ownerList.contains(p)) {
+        listPlayer.add(ChatColor.WHITE + p + ChatColor.GOLD + "(owner)" + ChatColor.WHITE);
+      } else if (inACL.contains(p)) {
+        listPlayer.add(ChatColor.WHITE + p + ChatColor.GREEN + "(acl)" + ChatColor.WHITE);
+      } else {
+        listPlayer.add(ChatColor.WHITE + p);
+      }
+      listPlayerRAW.add(p);
+    }
+
+    sender.sendMessage(ChatColor.GOLD+" In channel: "+plugin.WHITE + listPlayer.toString());
+    listPlayer.clear();
+
+    // List owners not listed above
+    for (String o : ownerList) {
+      if (!listPlayerRAW.contains(o)) {
+        listPlayer.add(ChatColor.GRAY + o + "(owner)" + ChatColor.WHITE);
+        listPlayerRAW.add(o);
+      }
+    }
+
+    // List users with ACL, not listed above
+    for (String a : inACL) {
+      if (!listPlayerRAW.contains(a)) {
+        listPlayer.add(ChatColor.GRAY + a + "(in acl)" + ChatColor.WHITE);
+        listPlayerRAW.add(a);
+      }
+    }
+
+    sender.sendMessage(ChatColor.GRAY + " Not here: "+plugin.WHITE + listPlayer.toString());
+
+    return true;
+  }
+
+  /**
+   * List what channels a player is part of
+   * @param sender
+   * @param args
+   * @return
+   */
+  private boolean playerInChannels(CommandSender sender, String[] args) {
+    String playerCheck = plugin.myGetPlayerName(args[1]);
+    Boolean playerFound = false;
+    ArrayList<String> chanList = new ArrayList<String>();
+
+    List<String> ChannelsList = plugin.getStorageConfig().getStringList("Channels");
+    for (String Chan : ChannelsList) {
+      List<String> ChanList = plugin.getStorageConfig().getStringList(Chan+".list");
+      for(String p : ChanList) {
+        if (playerCheck.equals(p)) {
+          chanList.add("#" + Chan);
+          playerFound = true;
+        }
+      }
+    }
+
+    if (playerFound) {
+      sender.sendMessage(plugin.DARK_GREEN+ "Player "+ ChatColor.GOLD +playerCheck+plugin.DARK_GREEN+" is in "+ChatColor.GOLD + chanList.toString());
+    } else {
+      sender.sendMessage(plugin.DARK_GREEN+ "Player "+ ChatColor.GOLD +playerCheck+plugin.DARK_GREEN+" is not in a channel");
+    }
+
+    return true;
+  }
+
 }

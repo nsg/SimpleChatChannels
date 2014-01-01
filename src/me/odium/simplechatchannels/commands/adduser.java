@@ -63,7 +63,7 @@ public class adduser implements CommandExecutor {
         List<String> ChanList = plugin.getStorageConfig().getStringList(ChanName+".list");
         for(Player op: players){
           if(ChanList.contains(op.getName())) {
-            op.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD +AddPlayName + plugin.DARK_GREEN + " has been added to" + plugin.GOLD + ChanName + "'s " + plugin.DARK_GREEN + "Access List by " + PlayerName);              
+            op.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD +AddPlayName + plugin.DARK_GREEN + " has been added to " + plugin.GOLD + ChanName + "'s " + plugin.DARK_GREEN + "Access List by " + PlayerName);              
           }
         }
 

@@ -63,7 +63,7 @@ public class deluser implements CommandExecutor {
         List<String> ChanList = plugin.getStorageConfig().getStringList(ChanName+".AccList");
         for(Player op: players){
           if(ChanList.contains(op.getName())) {
-            op.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD+ AddPlayName +plugin.DARK_GREEN + " has been removed from" + plugin.GOLD + ChanName + "'s " + plugin.DARK_GREEN + "acces list by " + PlayerName);              
+            op.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD+ AddPlayName +plugin.DARK_GREEN + " has been removed from" + plugin.GOLD + ChanName + "'s " + plugin.DARK_GREEN + " acces list by " + PlayerName);              
           }
         }
         return true;

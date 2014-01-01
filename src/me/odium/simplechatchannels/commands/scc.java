@@ -36,7 +36,7 @@ public class scc implements CommandExecutor {
       sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"Channel Commands"+ChatColor.GOLD+" ]");
       sender.sendMessage(ChatColor.GREEN + " /addchan [-l] <channel> " + ChatColor.WHITE + "- Create and join a channel");      
       sender.sendMessage(ChatColor.GREEN + " /delchan <channel> " + ChatColor.WHITE + "- Delete a channel you own");
-      sender.sendMessage(ChatColor.GREEN + " /joinchan <channel> " + ChatColor.WHITE + "- Join a channel");
+      sender.sendMessage(ChatColor.GREEN + " /joinchan <channel> " + ChatColor.WHITE + "- Join or set channel as active");
       sender.sendMessage(ChatColor.GREEN + " /partchan <channel> " + ChatColor.WHITE + "- Leave a channel");
       sender.sendMessage(ChatColor.GREEN + " /topic <channel> <topic> " + ChatColor.WHITE + "- Set a channel topic");
       if (sender.hasPermission("scc.spychan")) {
@@ -48,16 +48,14 @@ public class scc implements CommandExecutor {
       sender.sendMessage(ChatColor.GREEN + " /kuser <channel> <player> " + ChatColor.WHITE + "- Kick user from a chan");
       sender.sendMessage(ChatColor.GREEN + " /addowner <channel> <player> " + ChatColor.WHITE + "- Add an owner");
       sender.sendMessage(ChatColor.GREEN + " /delowner <channel> <player> " + ChatColor.WHITE + "- Remove an owner");   
-      sender.sendMessage(ChatColor.GREEN + " /adduser <channel> <player> " + ChatColor.WHITE + "- Add user to a locked chan's Access List");
-      sender.sendMessage(ChatColor.GREEN + " /deluser <channel> <player> " + ChatColor.WHITE + "- Remove user from a locked chan's Access List");
+      sender.sendMessage(ChatColor.GREEN + " /adduser <channel> <player> " + ChatColor.WHITE + "- Add user to a locked chan's Access List (ACL)");
+      sender.sendMessage(ChatColor.GREEN + " /deluser <channel> <player> " + ChatColor.WHITE + "- Remove user from a locked chan's Access List (ACL)");
       return true;
     } else if (args.length == 2 && args[0].equalsIgnoreCase("help") && args[1].equalsIgnoreCase("list")) {
       sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"List Commands"+ChatColor.GOLD+" ]");
-      sender.sendMessage(ChatColor.GREEN + " /chanlist " + ChatColor.WHITE + "- List channels");
-      sender.sendMessage(ChatColor.GREEN + " /chanlist <channel> " + ChatColor.WHITE + "- List channel users");
-      sender.sendMessage(ChatColor.GREEN + " /chanlist -o <channel> " + ChatColor.WHITE + "- List channel owners");
-      sender.sendMessage(ChatColor.GREEN + " /chanlist -a <channel> " + ChatColor.WHITE + "- List channel access list");
-      sender.sendMessage(ChatColor.GREEN + " /chanlist -p <player> " + ChatColor.WHITE + "- List which channel a user is in");
+      sender.sendMessage(ChatColor.GREEN + " /chanlist " + ChatColor.WHITE + "- List all channels");
+      sender.sendMessage(ChatColor.GREEN + " /chanlist <channel> " + ChatColor.WHITE + "- List channel users, owners and ACLs");
+      sender.sendMessage(ChatColor.GREEN + " /chanlist hasplayer <player> " + ChatColor.WHITE + "- List which channels a user is in");
       return true;      
     } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
       if(player == null || player.hasPermission("scc.reload")) {

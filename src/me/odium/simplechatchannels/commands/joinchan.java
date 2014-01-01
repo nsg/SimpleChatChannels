@@ -43,28 +43,21 @@ public class joinchan implements CommandExecutor {
       return true;
     } 
     
-    
-    boolean playerInchannel = plugin.InChannel.containsKey(player);
-    if (playerInchannel == true) {
-      plugin.AlreadyInChannel(player);
-      return true;
-      
-    }
+
+    List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // get the player list
 
     // IF LOCKED CHANNEL
     if(plugin.getStorageConfig().getBoolean(ChanName+".locked") == true) { // if channel is locked
       if(plugin.getStorageConfig().getStringList(ChanName+".AccList").contains(PlayerName.toLowerCase())) { // if player is in access list
-      List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // get the player list
 
         if (ChList.contains(PlayerName)) { // if player is in player list
-          player.sendMessage(ChatColor.DARK_GREEN+"[SCC] "+ChatColor.GOLD+ChatColor.DARK_GREEN + "Already in "+ChatColor.GOLD+ChanName); // inform them already in chan
+          plugin.setChannel(player, ChanName);
           return true;
         } else {
-
-          plugin.toggleChannel(player, ChanName); // Join Channel
+          plugin.joinChannel(player, ChanName); // Join Channel
           return true;
-
         }
+
       } else { // if player not in access list
         sender.sendMessage(plugin.DARK_RED+"[SCC] You must first be added to "+ChatColor.GOLD+ChanName+"'s"+ChatColor.DARK_RED+" Access List");
         return true;
@@ -73,16 +66,12 @@ public class joinchan implements CommandExecutor {
       // IF NOT LOCKED CHANNEL
     } else {
 
-      List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // get the player list
-      if (ChList.contains(PlayerName)) {
-        player.sendMessage(ChatColor.DARK_GREEN+"[SCC] "+ChatColor.GOLD+ChatColor.DARK_GREEN + "Already in "+ChatColor.GOLD+ChanName);
+      if (ChList.contains(PlayerName)) { // if player is in player list
+        plugin.setChannel(player, ChanName);
         return true;
-
       } else {
-
-        plugin.toggleChannel(player, ChanName);
+        plugin.joinChannel(player, ChanName); // Join Channel
         return true;
-
       }
 
     }

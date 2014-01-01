@@ -1,2 +1,4 @@
+This is based on SimpleChatChannels from https://github.com/OdiumxXx/SimpleChatChannels
 
-Contributions Welcome. :)
+I have re-written/changed the channel management so you can join multiple channels at once.
+I have removed/broken some code and changed the syntax to some extent, this version is not compatible with the original.
