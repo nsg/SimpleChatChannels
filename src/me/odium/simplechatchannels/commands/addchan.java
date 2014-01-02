@@ -30,7 +30,7 @@ public class addchan implements CommandExecutor {
 
     if (args.length == 0) {
       sender.sendMessage("/addchan <channelname> - Create a channel");
-      sender.sendMessage("/addchan -l <channelname> - Create a locked channel");
+      sender.sendMessage("/addchan lock <channelname> - Create a locked channel");
       return true;
     }
 
@@ -40,7 +40,7 @@ public class addchan implements CommandExecutor {
     if (args.length == 1) {
       ChanName = args[0].toLowerCase();
       PlayerName = player.getName().toLowerCase();
-    } else if (args.length == 2 && args[0].equalsIgnoreCase("-l")) {
+    } else if (args.length == 2 && args[0].equalsIgnoreCase("lock")) {
       ChanName = args[1].toLowerCase();
       PlayerName = player.getName().toLowerCase();
       lockedChannel = true;

@@ -34,7 +34,8 @@ public class scc implements CommandExecutor {
       return true;
     } else if (args.length == 2 && args[0].equalsIgnoreCase("help") && args[1].equalsIgnoreCase("channels")) {
       sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"Channel Commands"+ChatColor.GOLD+" ]");
-      sender.sendMessage(ChatColor.GREEN + " /addchan [-l] <channel> " + ChatColor.WHITE + "- Create and join a channel");      
+      sender.sendMessage(ChatColor.GREEN + " /addchan <channel> " + ChatColor.WHITE + "- Create and join a channel");      
+      sender.sendMessage(ChatColor.GREEN + " /addchan lock <channel> " + ChatColor.WHITE + "- Create and join a locked channel");      
       sender.sendMessage(ChatColor.GREEN + " /delchan <channel> " + ChatColor.WHITE + "- Delete a channel you own");
       sender.sendMessage(ChatColor.GREEN + " /joinchan <channel> " + ChatColor.WHITE + "- Join or set channel as active");
       sender.sendMessage(ChatColor.GREEN + " /leavechan <channel> " + ChatColor.WHITE + "- Leave a channel");
