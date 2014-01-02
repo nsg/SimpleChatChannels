@@ -46,7 +46,8 @@ public class delchan implements CommandExecutor {
             op.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD +ChanName + plugin.DARK_GREEN + " has been deleted by " + plugin.GOLD + "Console" );
           } else {
             op.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD +ChanName + plugin.DARK_GREEN + " has been deleted by " + plugin.GOLD + PlayerName );
-            plugin.toggleChannel(op, ChanName);
+            plugin.partChannel(op, ChanName);
+            plugin.removePersistentPlayerChannels(PlayerName, ChanName);
           }
         }
       }

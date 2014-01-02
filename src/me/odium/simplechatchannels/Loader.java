@@ -185,12 +185,18 @@ public class Loader extends JavaPlugin {
   }
 
   public void joinChannel(Player player, String channel){
+    joinChannel(player, channel, true);
+  }
+  
+  public void joinChannel(Player player, String channel, Boolean isActive){
 
     String playerName = player.getName().toLowerCase(); // get the player name
     Player[] players = Bukkit.getOnlinePlayers(); // get all online players
     String playerDisplayName = player.getDisplayName();
 
-    setChannel(player, channel);
+    if (isActive) {
+      setChannel(player, channel);
+    }
 
     List<String> ChList = getStorageConfig().getStringList(channel+".list"); // get the player list
     ChList.add(playerName);  // add the player to the list
@@ -209,6 +215,9 @@ public class Loader extends JavaPlugin {
       String topic = getStorageConfig().getString(channel+".topic");
       player.sendMessage(DARK_GREEN+"[SCC] Topic for " + channel + ": "+ChatColor.WHITE+ topic);
     }
+    
+    // Save the state so we can re-join the user to his channels when the user joins
+    setPersistentPlayerChannels(playerName, channel);
 
   }
 
@@ -242,6 +251,38 @@ public class Loader extends JavaPlugin {
       partChannel(player, channel);
     } else { // if player is not in  a channel
       joinChannel(player, channel);
+    }
+  }
+  
+  public void setPersistentPlayerChannels(String playerName, String channel) {
+    if (!getStorageConfig().contains("PersistentChannels")) {
+      getStorageConfig().createSection("PersistentChannels");
+    }
+    List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + playerName);
+    if (!persistentPlayerChannels.contains(channel)) {
+      persistentPlayerChannels.add(channel);
+      getStorageConfig().set("PersistentChannels." + playerName, persistentPlayerChannels);
+      saveStorageConfig();
+    }
+  }
+
+  public void removePersistentPlayerChannels(String playerName, String channel) {
+    if (getStorageConfig().contains("PersistentChannels")) {
+      List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + playerName);
+      if (persistentPlayerChannels.contains(channel)) {
+        persistentPlayerChannels.remove(channel);
+        getStorageConfig().set("PersistentChannels." + playerName, persistentPlayerChannels);
+        saveStorageConfig();
+      }
+    }
+  }  
+  
+  public void loadPersistentPlayerChannels(Player player) {
+    if (getStorageConfig().contains("PersistentChannels")) {
+      List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + player.getName());
+      for (String channel : persistentPlayerChannels) {
+        joinChannel(player, channel, false);
+      }
     }
   }
 

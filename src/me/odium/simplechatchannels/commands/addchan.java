@@ -77,6 +77,9 @@ public class addchan implements CommandExecutor {
     }
 
     plugin.setChannel(player, ChanName);
+    
+    // Save the state so we can re-join the user to his channels when the user joins
+    plugin.setPersistentPlayerChannels(player.getName(), ChanName);
 
     return true;
   }

@@ -34,7 +34,7 @@ public class leavechan implements CommandExecutor {
     } else if (args.length == 0) {
       if (plugin.InChannel.containsKey(player)) {
         String Chan = plugin.ChannelMap.get(player);
-        plugin.toggleChannel(player, Chan);          
+        plugin.partChannel(player, Chan);          
         return true;        
       } else {
         sender.sendMessage(plugin.DARK_RED+"[SCC] You are not in a channel.");
@@ -55,7 +55,7 @@ public class leavechan implements CommandExecutor {
           sender.sendMessage(plugin.DARK_RED+"[SCC] You are not in " + plugin.GOLD+ ChanName);
           return true;
         } else {
-          plugin.toggleChannel(player, ChanName);          
+          plugin.partChannel(player, ChanName);          
           return true;
 
         }

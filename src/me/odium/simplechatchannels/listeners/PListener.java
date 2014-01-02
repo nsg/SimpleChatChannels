@@ -1,7 +1,6 @@
 package me.odium.simplechatchannels.listeners;
 
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import me.odium.simplechatchannels.Loader;
@@ -12,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PListener implements Listener {
@@ -28,46 +28,26 @@ public class PListener implements Listener {
   @EventHandler(priority = EventPriority.NORMAL)
   public void onPlayerQuit(PlayerQuitEvent event){
     Player player = event.getPlayer();
-    String playerName = player.getName().toLowerCase();
-    List<String> ChList = plugin.getStorageConfig().getStringList("Channels"); // get the player list
-    List<String> InChatList = plugin.getStorageConfig().getStringList("InChatList"); // get the player list
-
-    if (plugin.InChannel.containsKey(player)) {
-      for (String Chan : ChList) {
-        List<String> UserList = plugin.getStorageConfig().getStringList(Chan+".list"); // get the player list
-        if (UserList.contains(playerName)) {
-          UserList.remove(playerName);  // remove the player from the list
-          plugin.getStorageConfig().set(Chan+".list", UserList); // set the new list
-        }
+  
+    // Use PersistentChannels to find the channels to part from
+    if (plugin.getStorageConfig().contains("PersistentChannels")) {
+      List<String> persistentPlayerChannels = plugin.getStorageConfig().getStringList("PersistentChannels." + player.getName());
+      for (String channel : persistentPlayerChannels) {
+        plugin.partChannel(player, channel);
       }
-      InChatList.remove(playerName);  // remove the player from the list
-      plugin.getStorageConfig().set("InChatList", InChatList); // set th
-
-      plugin.InChannel.put(player, false);		  	  
-      plugin.InChannel.remove(player);
-      plugin.saveStorageConfig();
     }
+    
   }
 
+  @EventHandler(priority = EventPriority.NORMAL)
+  public void onPlayerJoin(PlayerJoinEvent event) {
+    plugin.loadPersistentPlayerChannels(event.getPlayer());
+  }
 
   @EventHandler(priority = EventPriority.LOW)
   public void onPlayerChat(AsyncPlayerChatEvent chat) {
     Player player = chat.getPlayer();
     String message = chat.getMessage();
-
-    if (plugin.getConfig().getBoolean("SilenceGeneralChat") == true) { // if silence general chat is enabled
-      if (!plugin.InChannel.containsKey(player)) { // if player is not in a channel
-        Player[] players = Bukkit.getOnlinePlayers(); // get a list of all players online
-        chat.getRecipients().clear(); // clear chat recipients
-        Set<Player> chatrecipients = chat.getRecipients(); // get empty recipient list
-        for (Player cake : players) { // for all players
-          if (!plugin.InChannel.containsKey(cake)) { // if player is not in channel
-            chatrecipients.add(cake); // add them as a recipient
-          }
-        }
-      }
-    }
-
 
     if(plugin.InChannel.containsKey(player)){ // if key says player is in a channel
       String Chan = plugin.ChannelMap.get(player); // get the channel
