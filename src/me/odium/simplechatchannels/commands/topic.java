@@ -2,6 +2,7 @@ package me.odium.simplechatchannels.commands;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import me.odium.simplechatchannels.Loader;
 
@@ -35,8 +36,8 @@ public class topic implements CommandExecutor {
     String ChannelName = args[0];
 
     //CHECK CHANNEL EXISTS
-    List<String> Channels = plugin.getStorageConfig().getStringList("Channels"); // get the Channels list
-    if (!Channels.contains(ChannelName)) {
+    Map<String,Object> Channels = plugin.getStorageConfig().getConfigurationSection("Channels").getValues(false);
+    if (!Channels.containsKey(ChannelName)) {
       plugin.NotExist(sender, ChannelName);
       
       return true;
@@ -54,7 +55,7 @@ public class topic implements CommandExecutor {
     }
 
     // CHECK PLAYER HAS OWNER ACCESS TO CHANNEL
-    List<String> OwnerList = plugin.getStorageConfig().getStringList(ChannelName+".owner"); // get the player list    
+    List<String> OwnerList = plugin.getStorageConfig().getStringList("Channels."+ChannelName+".owner"); // get the player list    
     if (!OwnerList.contains(playerName)) {
       plugin.NotOwner(sender, ChannelName);
       return true;
@@ -73,7 +74,7 @@ public class topic implements CommandExecutor {
         }
         String topicArgs = sb.toString();   
         
-        plugin.getStorageConfig().set(ChannelName+".topic", topicArgs); // Set the topic
+        plugin.getStorageConfig().set("Channels."+ChannelName+".topic", topicArgs); // Set the topic
         plugin.saveStorageConfig();
 
         Player[] players = Bukkit.getOnlinePlayers(); // get all online players      

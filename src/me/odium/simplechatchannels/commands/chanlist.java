@@ -1,7 +1,10 @@
 package me.odium.simplechatchannels.commands;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import me.odium.simplechatchannels.Loader;
 
@@ -35,13 +38,22 @@ public class chanlist implements CommandExecutor {
    * @param sender
    */
   private boolean listAllChannels(CommandSender sender) {
-    List<String> ChannelsList = plugin.getStorageConfig().getStringList("Channels");
+    
+    if (!plugin.getStorageConfig().contains("Channels")) {
+      sender.sendMessage("There are no channels");
+      return true;
+    }
+    
+    Map<String,Object> ChannelsList = plugin.getStorageConfig().getConfigurationSection("Channels").getValues(false);
     sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"Channel List"+ChatColor.GOLD+" ]");
     ArrayList<String> chanList = new ArrayList<String>();
 
-    for (String chan : ChannelsList) {
-      int UserCount = plugin.getStorageConfig().getStringList(chan+".list").size();
-      String topic = plugin.getStorageConfig().getString(chan+".topic");
+    Iterator<Entry<String, Object>> it = ChannelsList.entrySet().iterator();
+    while(it.hasNext()) {
+      Entry<String,Object> itv = it.next();
+      String chan = itv.getKey();
+      int UserCount = plugin.getStorageConfig().getStringList("Channels."+chan+".list").size();
+      String topic = plugin.getStorageConfig().getString("Channels."+chan+".topic");
 
       if (topic == null) {
         topic = " (No Topic Set) ";
@@ -50,7 +62,7 @@ public class chanlist implements CommandExecutor {
       }
 
       String lock = "";
-      if (plugin.getStorageConfig().getBoolean(chan+".Locked")) {
+      if (plugin.getStorageConfig().getBoolean("Channels."+chan+".Locked")) {
         lock = ChatColor.RED + "(L)" + ChatColor.WHITE;
       }
 
@@ -73,7 +85,7 @@ public class chanlist implements CommandExecutor {
   private boolean listChannel(CommandSender sender, String[] args) {
     String ChanName = args[0].toLowerCase();
 
-    if (!plugin.getStorageConfig().getStringList("Channels").contains(ChanName)) {
+    if (!plugin.getStorageConfig().getConfigurationSection("Channels").getValues(false).containsKey(ChanName)) {
       plugin.NotExist(sender, ChanName);
       return true;
     }
@@ -84,21 +96,21 @@ public class chanlist implements CommandExecutor {
     ArrayList<String> listPlayerRAW = new ArrayList<String>();
 
     // Owners of the channel
-    List<String> OwList = plugin.getStorageConfig().getStringList(ChanName+".owner");
+    List<String> OwList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
     for(int i = 0; i < OwList.size(); ++i) {
       String ChOwners = OwList.get(i);
       ownerList.add(ChOwners);
     }
 
     // List ACL
-    List<String> AccList = plugin.getStorageConfig().getStringList(ChanName+".AccList"); // create/get the owner list
+    List<String> AccList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".AccList"); // create/get the owner list
     for(int i = 0; i < AccList.size(); ++i) {
       String ChAccess = AccList.get(i);
       inACL.add(ChAccess);
     }
 
     // Players in channel
-    java.util.List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list");
+    java.util.List<String> ChList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".list");
     sender.sendMessage(ChatColor.GOLD + "Channel " + ChanName);
 
     // List users in channel
@@ -148,9 +160,12 @@ public class chanlist implements CommandExecutor {
     Boolean playerFound = false;
     ArrayList<String> chanList = new ArrayList<String>();
 
-    List<String> ChannelsList = plugin.getStorageConfig().getStringList("Channels");
-    for (String Chan : ChannelsList) {
-      List<String> ChanList = plugin.getStorageConfig().getStringList(Chan+".list");
+    Map<String,Object> ChannelsList = plugin.getStorageConfig().getConfigurationSection("Channels").getValues(false);
+    Iterator<Entry<String, Object>> it = ChannelsList.entrySet().iterator();
+    while(it.hasNext()) {
+      Entry<String,Object> itv = it.next();
+      String Chan = itv.getKey();
+      List<String> ChanList = plugin.getStorageConfig().getStringList("Channels."+Chan+".list");
       for(String p : ChanList) {
         if (playerCheck.equals(p)) {
           chanList.add("#" + Chan);

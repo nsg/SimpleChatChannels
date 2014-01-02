@@ -31,15 +31,14 @@ public class delchan implements CommandExecutor {
     } else {
       PlayerName = "Console";
     }
-    List<String> ChowList = plugin.getStorageConfig().getStringList(ChanName+".owner");
-    List<String> ChannelsList = plugin.getStorageConfig().getStringList("Channels"); // create/get the channel list
+    List<String> ChowList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
 
     if (player == null || ChowList.contains(PlayerName) || player.hasPermission("scc.admin")) {
-      if (!plugin.getStorageConfig().contains(ChanName)) {
+      if (!plugin.getStorageConfig().contains("Channels."+ChanName)) {
         plugin.NotExist(sender, ChanName);
         return true;
       }
-      List<String> ChanList = plugin.getStorageConfig().getStringList(ChanName+".list");
+      List<String> ChanList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".list");
       for(Player op: players){
         if(ChanList.contains(op.getName().toLowerCase())) {
           if(player == null) {
@@ -51,9 +50,7 @@ public class delchan implements CommandExecutor {
           }
         }
       }
-      plugin.getStorageConfig().set(ChanName, null); // delete the channel
-      ChannelsList.remove(ChanName);
-      plugin.getStorageConfig().set("Channels", ChannelsList); // set the new list
+      plugin.getStorageConfig().set("Channels."+ChanName, null); // delete the channel
       plugin.saveStorageConfig();      
         sender.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD +ChanName + plugin.DARK_GREEN + " has been deleted");
       return true;

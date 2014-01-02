@@ -54,7 +54,7 @@ public class PListener implements Listener {
       log.info("[" + Chan + " / " + player.getDisplayName() + "]" + message); // log the message to console
 
       Player[] players = Bukkit.getOnlinePlayers(); // get all online players      
-      List<String> ChanList = plugin.getStorageConfig().getStringList(Chan+".list"); // get the list of users in channel
+      List<String> ChanList = plugin.getStorageConfig().getStringList("Channels."+Chan+".list"); // get the list of users in channel
 
       String prefixTemp = plugin.getConfig().getString("ChatPrefix.Prefix").replace("`player", player.getDisplayName()).replace("`channel", Chan);      
       String prefix = plugin.replaceColorMacros(prefixTemp); 

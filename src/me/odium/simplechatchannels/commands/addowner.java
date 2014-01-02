@@ -34,10 +34,10 @@ public class addowner implements CommandExecutor {
     } else {
       PlayerName = "Console";
     }
-    List<String> ChowList = plugin.getStorageConfig().getStringList(ChanName+".owner");
+    List<String> ChowList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
     if (player == null || ChowList.contains(PlayerName) && player.hasPermission("scc.admin")) {
       String AddPlayName = plugin.myGetPlayerName(args[1]).toLowerCase();
-      boolean ChanTemp = plugin.getStorageConfig().contains(ChanName);
+      boolean ChanTemp = plugin.getStorageConfig().contains("Channels."+ChanName);
       if(ChanTemp == false) {
         plugin.NotExist(sender, ChanName);
         return true;
@@ -47,7 +47,7 @@ public class addowner implements CommandExecutor {
           return true;
         } else {
           ChowList.add(AddPlayName);  // add the player to the list
-          plugin.getStorageConfig().set(ChanName+".owner", ChowList); // set the new list
+          plugin.getStorageConfig().set("Channels."+ChanName+".owner", ChowList); // set the new list
           sender.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD+ AddPlayName + plugin.DARK_GREEN + " added to " + plugin.GOLD + ChanName + "'s" + plugin.DARK_GREEN + " owner list");
           Player target = plugin.getServer().getPlayer(AddPlayName);
           if(target != null) { target.sendMessage(plugin.DARK_GREEN+"[SCC] "+"You have been added to " + plugin.GOLD + ChanName + "'s" + plugin.DARK_GREEN + " owner list"); }

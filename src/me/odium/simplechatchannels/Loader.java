@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -138,17 +140,22 @@ public class Loader extends JavaPlugin {
     this.getCommand("spychan").setExecutor(new spychan(this));
     this.getCommand("global").setExecutor(new Global(this));
 
+    cleanOldDecayedChannels();
+    
     plugin = this;
 
     log.info("[" + getDescription().getName() + "] " + getDescription().getVersion() + " enabled.");
   }
 
   public void onDisable() {
-    List<String> ChansList = getStorageConfig().getStringList("Channels"); // get the channels list    
-    for(String ch: ChansList){
-      List<String> PList = getStorageConfig().getStringList(ch+".list"); // get the player list
+    Map<String,Object> ChansList = getStorageConfig().getConfigurationSection("Channels").getValues(false);
+    Iterator<Entry<String, Object>> it = ChansList.entrySet().iterator();
+    while(it.hasNext()) {
+      Entry<String,Object> itv = it.next();
+      String ch = itv.getKey();
+      List<String> PList = getStorageConfig().getStringList("Channels."+ch+".list"); // get the player list
       PList.removeAll(PList);
-      getStorageConfig().set(ch+".list", PList); // set the new list
+      getStorageConfig().set("Channels."+ch+".list", PList); // set the new list
     }
     List<String> InChatList = getStorageConfig().getStringList("InChatList");
     InChatList.clear();
@@ -181,6 +188,13 @@ public class Loader extends JavaPlugin {
   public void setChannel(Player player, String channel){
     InChannel.put(player, true);
     ChannelMap.put(player, channel);
+    
+    // Note the channel for the channel decay
+    int channelUsage = getStorageConfig().getInt("Channels."+channel + ".Usage");
+    channelUsage = (int) (System.currentTimeMillis() / 1000L);
+    getStorageConfig().set("Channels."+channel + ".Usage", channelUsage);
+    saveStorageConfig();
+    
     player.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + player.getDisplayName() + ChatColor.DARK_GREEN + " " +channel + " is active");
   }
 
@@ -198,21 +212,21 @@ public class Loader extends JavaPlugin {
       setChannel(player, channel);
     }
 
-    List<String> ChList = getStorageConfig().getStringList(channel+".list"); // get the player list
+    List<String> ChList = getStorageConfig().getStringList("Channels."+channel+".list"); // get the player list
     ChList.add(playerName);  // add the player to the list
-    getStorageConfig().set(channel+".list", ChList); // set the new list
+    getStorageConfig().set("Channels."+channel+".list", ChList); // set the new list
     saveStorageConfig();
 
     // NOTIFY USERS IN CHANNEL OF A JOIN
-    List<String> ChanList = getStorageConfig().getStringList(channel+".list");
+    List<String> ChanList = getStorageConfig().getStringList("Channels."+channel+".list");
     for(Player op: players){
       if(ChanList.contains(op.getName().toLowerCase())) {
         op.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" joined "+ channel);              
       }
     }
     // SHOW TOPIC
-    if (getStorageConfig().getString(channel+".topic") != null) {
-      String topic = getStorageConfig().getString(channel+".topic");
+    if (getStorageConfig().getString("Channels."+channel+".topic") != null) {
+      String topic = getStorageConfig().getString("Channels."+channel+".topic");
       player.sendMessage(DARK_GREEN+"[SCC] Topic for " + channel + ": "+ChatColor.WHITE+ topic);
     }
     
@@ -230,14 +244,14 @@ public class Loader extends JavaPlugin {
     InChannel.remove(player);
     ChannelMap.remove(player);
 
-    List<String> ChList = getStorageConfig().getStringList(channel+".list"); // get the player list
+    List<String> ChList = getStorageConfig().getStringList("Channels."+channel+".list"); // get the player list
     ChList.remove(playerName);  // remove the player from the list
-    getStorageConfig().set(channel+".list", ChList); // set the new list
+    getStorageConfig().set("Channels."+channel+".list", ChList); // set the new list
     saveStorageConfig();
 
     // NOTIFY USERS IN CHANNEL OF A PART
     player.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" left "+ channel);
-    List<String> ChanList = getStorageConfig().getStringList(channel+".list");
+    List<String> ChanList = getStorageConfig().getStringList("Channels."+channel+".list");
     for(Player play : players){
       if(ChanList.contains(play.getName())) {
         play.sendMessage(DARK_GREEN+"[SCC] "+ ChatColor.GOLD + playerDisplayName + ChatColor.DARK_GREEN+" left "+ channel);
@@ -284,6 +298,43 @@ public class Loader extends JavaPlugin {
         joinChannel(player, channel, false);
       }
     }
+  }
+  
+  public void cleanOldDecayedChannels() {
+    
+    Logger log = getLogger();
+    log.info("cleanOldDecayedChannels triggered");
+    
+    Map<String,Object> channelData = getStorageConfig().getConfigurationSection("Channels").getValues(false);
+    Iterator<Entry<String, Object>> it = channelData.entrySet().iterator();
+    while(it.hasNext()) {
+      Entry<String,Object> itv = it.next();
+      String channel = itv.getKey();
+      int channelUsage = getStorageConfig().getInt("Channels."+channel + ".Usage");
+      int oneFortnight = 60; //86400 * 14;
+      int timeStamp = (int) (System.currentTimeMillis() / 1000L);
+      log.info("cleanOldDecayedChannels: Check " + channel + "; usage: " + channelUsage);
+      
+      if (timeStamp - oneFortnight > channelUsage) {
+        log.info("cleanOldDecayedChannels: " + channel + " is to old, remove from Channels");
+        getStorageConfig().set("Channels."+channel, null);
+        Map<String,Object> persistentPlayers = getStorageConfig().getConfigurationSection("PersistentChannels").getValues(false);
+        Iterator<Entry<String, Object>> it2 = persistentPlayers.entrySet().iterator();
+        while(it2.hasNext()) {
+          Entry<String,Object> itv2 = it2.next();
+          String pplayer = itv2.getKey();
+          List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + pplayer);
+          if (persistentPlayerChannels.contains(channel)) {
+            persistentPlayerChannels.remove(channel);
+            log.info("cleanOldDecayedChannels: remove " + channel + " from " + pplayer + " auto-join list");
+          }
+          getStorageConfig().set("PersistentChannels." + pplayer, persistentPlayerChannels);
+        }
+      }
+      
+    }
+    
+    saveStorageConfig();
   }
 
   public boolean NotExist(CommandSender sender, String ChanName) {

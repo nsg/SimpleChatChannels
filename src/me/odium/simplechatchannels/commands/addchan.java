@@ -49,25 +49,22 @@ public class addchan implements CommandExecutor {
     }
 
     // CHECK IF CHANNEL EXISTS
-    if (plugin.getStorageConfig().contains(ChanName)) {
+    if (plugin.getStorageConfig().contains("Channels."+ChanName)) {
       sender.sendMessage(plugin.DARK_RED+"[SCC] "+plugin.GOLD + ChanName + plugin.DARK_RED+ " already exists");
       return true;
     }
 
-    plugin.getStorageConfig().createSection(ChanName); // create the 'channel'
-    List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // create/get the player list
-    List<String> OwList = plugin.getStorageConfig().getStringList(ChanName+".owner"); // create/get the owner list
-    List<String> AccList = plugin.getStorageConfig().getStringList(ChanName+".AccList"); // create/get the owner list
-    List<String> ChannelsList = plugin.getStorageConfig().getStringList("Channels"); // create/get the owner list
+    plugin.getStorageConfig().createSection("Channels."+ChanName); // create the 'channel'
+    List<String> ChList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".list"); // create/get the player list
+    List<String> OwList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner"); // create/get the owner list
+    List<String> AccList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".AccList"); // create/get the owner list
     ChList.add(PlayerName);  // add the player to the list
     OwList.add(PlayerName);  // add the player to the owner list
     AccList.add(PlayerName);  // add the player to the access list
-    ChannelsList.add(ChanName);
-    plugin.getStorageConfig().set(ChanName+".list", ChList); // set the new list
-    plugin.getStorageConfig().set(ChanName+".owner", OwList); // set the new list
-    plugin.getStorageConfig().set(ChanName+".AccList", AccList); // set the new list
-    plugin.getStorageConfig().set(ChanName+".Locked", lockedChannel); // set the new list
-    plugin.getStorageConfig().set("Channels", ChannelsList); // set the new list
+    plugin.getStorageConfig().set("Channels."+ChanName+".list", ChList); // set the new list
+    plugin.getStorageConfig().set("Channels."+ChanName+".owner", OwList); // set the new list
+    plugin.getStorageConfig().set("Channels."+ChanName+".AccList", AccList); // set the new list
+    plugin.getStorageConfig().set("Channels."+ChanName+".Locked", lockedChannel); // set the new list
     plugin.saveStorageConfig();
 
     if (lockedChannel) {

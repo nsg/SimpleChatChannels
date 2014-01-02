@@ -39,7 +39,7 @@ public class spychan implements CommandExecutor {
         sender.sendMessage(ChatColor.DARK_GREEN+"[SCC] "+"No Longer spying on channel: "+ChatColor.GOLD+spyChannel); // notify user
         return true;
       }
-      boolean channelCheck = plugin.getStorageConfig().contains(spyChannel); // check if channel exists
+      boolean channelCheck = plugin.getStorageConfig().contains("Channels."+spyChannel); // check if channel exists
       if(channelCheck == false) { // if not
         plugin.NotExist(sender, spyChannel); // tell player it doesn't exist and finish
         return true;      

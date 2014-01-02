@@ -45,12 +45,12 @@ public class leavechan implements CommandExecutor {
     } else if (args.length == 1) {
       String ChanName = args[0].toLowerCase();
       String PlayerName = player.getName().toLowerCase();
-      boolean ChanTemp = plugin.getStorageConfig().contains(ChanName);
+      boolean ChanTemp = plugin.getStorageConfig().contains("Channels."+ChanName);
       if(ChanTemp == false) {
         plugin.NotExist(sender, ChanName);
         return true;
       } else {
-        List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // get the player list
+        List<String> ChList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".list"); // get the player list
         if (!ChList.contains(PlayerName)) {
           sender.sendMessage(plugin.DARK_RED+"[SCC] You are not in " + plugin.GOLD+ ChanName);
           return true;

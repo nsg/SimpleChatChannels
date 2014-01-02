@@ -30,11 +30,11 @@ public class delowner implements CommandExecutor {
       }
       String ChanName = args[0].toLowerCase();
       String PlayerName = player.getName().toLowerCase();
-      List<String> ChowList = plugin.getStorageConfig().getStringList(ChanName+".owner");
+      List<String> ChowList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
       if (player == null || ChowList.contains(PlayerName) && player.hasPermission("scc.admin")) {
         String AddPlayName = plugin.myGetPlayerName(args[1]);
         Player target = plugin.getServer().getPlayer(args[1]);
-        boolean ChanTemp = plugin.getStorageConfig().contains(ChanName);
+        boolean ChanTemp = plugin.getStorageConfig().contains("Channels."+ChanName);
         if(ChanTemp == false) {
           plugin.NotExist(sender, ChanName);
           return true;
@@ -44,7 +44,7 @@ public class delowner implements CommandExecutor {
             return true;
           } else {
             ChowList.remove(PlayerName);  // remove the player from the list
-            plugin.getStorageConfig().set(ChanName+".owner", ChowList); // set the new list          
+            plugin.getStorageConfig().set("Channels."+ChanName+".owner", ChowList); // set the new list          
             sender.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD+ AddPlayName + plugin.DARK_GREEN + " removed From " + plugin.RED + ChanName + "'s" + plugin.DARK_GREEN + " owner list");
             if (target != null) {
               target.sendMessage(plugin.DARK_GREEN+"[SCC] "+"You have been removed from " + plugin.GOLD + ChanName + "'s" + plugin.DARK_GREEN + " owner list");              

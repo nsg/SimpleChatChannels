@@ -39,21 +39,21 @@ public class kuser implements CommandExecutor {
     }
     String AddPlayName = plugin.myGetPlayerName(args[1]).toLowerCase();
     Player target = Bukkit.getPlayer(AddPlayName);
-    List<String> ChowList = plugin.getStorageConfig().getStringList(ChanName+".owner");
+    List<String> ChowList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
     if (player == null || ChowList.contains(PlayerName) ) {
-      boolean ChanTemp = plugin.getStorageConfig().contains(ChanName);
+      boolean ChanTemp = plugin.getStorageConfig().contains("Channels."+ChanName);
       if(ChanTemp == false) {
         plugin.NotExist(sender, ChanName);
         return true;
       } else {
-        List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // get the player list
+        List<String> ChList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".list"); // get the player list
         List<String> InChatList = plugin.getStorageConfig().getStringList("InChatList"); // get the player list
         if (!ChList.contains(AddPlayName)) {
           sender.sendMessage(plugin.DARK_RED+"[SCC] "+plugin.GOLD + AddPlayName + plugin.DARK_RED+ " is not in " + plugin.GOLD+  ChanName);
           return true;
         } else {
           ChList.remove(AddPlayName);  // remove the player from the list
-          plugin.getStorageConfig().set(ChanName+".list", ChList); // set the new list
+          plugin.getStorageConfig().set("Channels."+ChanName+".list", ChList); // set the new list
           InChatList.remove(AddPlayName);  // add the player to the list
           plugin.getStorageConfig().set("InChatList", InChatList); // set the new list
           plugin.saveStorageConfig();
@@ -68,7 +68,7 @@ public class kuser implements CommandExecutor {
               }
             }
           }
-          List<String> ChanList = plugin.getStorageConfig().getStringList(ChanName+".list");
+          List<String> ChanList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".list");
           for(Player op: players){
             if(ChanList.contains(op.getName())) {
               op.sendMessage(plugin.DARK_GREEN+"[SCC] "+plugin.GOLD +  AddPlayName + plugin.DARK_GREEN + " has been kicked from" + plugin.GOLD + ChanName + plugin.DARK_GREEN + " by " +plugin.GOLD+ PlayerName);              
