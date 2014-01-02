@@ -27,7 +27,8 @@ public class scc implements CommandExecutor {
       sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"SimpleChatChannels " + plugin.getDescription().getVersion() +ChatColor.GOLD+" ]");
       sender.sendMessage(ChatColor.GREEN + " /scc help channels " + ChatColor.WHITE + "- Channels help menu");
       sender.sendMessage(ChatColor.GREEN + " /scc help users " + ChatColor.WHITE + "- Users help menu");
-      sender.sendMessage(ChatColor.GREEN + " /scc help list " + ChatColor.WHITE + "- Channel list help menu");      
+      sender.sendMessage(ChatColor.GREEN + " /scc help list " + ChatColor.WHITE + "- Channel list help menu");
+      sender.sendMessage(ChatColor.GREEN + " /scc help msg " + ChatColor.WHITE + "- Private message help menu");  
       if(player == null || player.hasPermission("scc.reload")) {
         sender.sendMessage(ChatColor.RED + " /scc reload " + ChatColor.WHITE + "- Reload the config");
       }
@@ -39,6 +40,7 @@ public class scc implements CommandExecutor {
       sender.sendMessage(ChatColor.GREEN + " /delchan <channel> " + ChatColor.WHITE + "- Delete a channel you own");
       sender.sendMessage(ChatColor.GREEN + " /joinchan <channel> " + ChatColor.WHITE + "- Join or set channel as active");
       sender.sendMessage(ChatColor.GREEN + " /leavechan <channel> " + ChatColor.WHITE + "- Leave a channel");
+      sender.sendMessage(ChatColor.GREEN + " /global " + ChatColor.WHITE + "- Return to global chat");
       sender.sendMessage(ChatColor.GREEN + " /topic <channel> <topic> " + ChatColor.WHITE + "- Set a channel topic");
       if (sender.hasPermission("scc.spychan")) {
         sender.sendMessage(ChatColor.GREEN + " /spychan [channel] " + ChatColor.WHITE + "- Spy on all or a specific channel");
@@ -57,6 +59,12 @@ public class scc implements CommandExecutor {
       sender.sendMessage(ChatColor.GREEN + " /chanlist " + ChatColor.WHITE + "- List all channels");
       sender.sendMessage(ChatColor.GREEN + " /chanlist <channel> " + ChatColor.WHITE + "- List channel users, owners and ACLs");
       sender.sendMessage(ChatColor.GREEN + " /chanlist hasplayer <player> " + ChatColor.WHITE + "- List which channels a user is in");
+      return true;      
+    } else if (args.length == 2 && args[0].equalsIgnoreCase("help") && args[1].equalsIgnoreCase("msg")) {
+      sender.sendMessage(ChatColor.GOLD + "[ "+ChatColor.WHITE+"Msg Commands"+ChatColor.GOLD+" ]");
+      sender.sendMessage(ChatColor.GREEN + " /msg " + ChatColor.WHITE + "- Return to channel/global chat");
+      sender.sendMessage(ChatColor.GREEN + " /msg <player> " + ChatColor.WHITE + "- Lock all messages to player");
+      sender.sendMessage(ChatColor.GREEN + " /msg <player> my message " + ChatColor.WHITE + "- Send a message to <player>");
       return true;      
     } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
       if(player == null || player.hasPermission("scc.reload")) {
