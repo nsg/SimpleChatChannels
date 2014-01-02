@@ -47,7 +47,7 @@ public class joinchan implements CommandExecutor {
     List<String> ChList = plugin.getStorageConfig().getStringList(ChanName+".list"); // get the player list
 
     // IF LOCKED CHANNEL
-    if(plugin.getStorageConfig().getBoolean(ChanName+".locked") == true) { // if channel is locked
+    if(plugin.getStorageConfig().getBoolean(ChanName+".Locked") == true) { // if channel is locked
       if(plugin.getStorageConfig().getStringList(ChanName+".AccList").contains(PlayerName.toLowerCase())) { // if player is in access list
 
         if (ChList.contains(PlayerName)) { // if player is in player list
