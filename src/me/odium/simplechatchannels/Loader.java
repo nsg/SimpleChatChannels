@@ -22,6 +22,7 @@ import me.odium.simplechatchannels.commands.leavechan;
 import me.odium.simplechatchannels.commands.scc;
 import me.odium.simplechatchannels.commands.spychan;
 import me.odium.simplechatchannels.commands.topic;
+import me.odium.simplechatchannels.commands.Global;
 import me.odium.simplechatchannels.listeners.PListener;
 
 import org.bukkit.Bukkit;
@@ -135,6 +136,7 @@ public class Loader extends JavaPlugin {
     this.getCommand("scc").setExecutor(new scc(this));
     this.getCommand("topic").setExecutor(new topic(this));
     this.getCommand("spychan").setExecutor(new spychan(this));
+    this.getCommand("global").setExecutor(new Global(this));
 
     plugin = this;
 

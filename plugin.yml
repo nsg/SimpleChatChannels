@@ -58,3 +58,6 @@ commands:
       description: Spy on specific/all channel conversation
       permission: scc.spychan
       usage: /spychan [channelname]
+   global:
+      description: Return to global channel
+      usage: /global
