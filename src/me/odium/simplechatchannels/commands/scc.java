@@ -37,7 +37,7 @@ public class scc implements CommandExecutor {
       sender.sendMessage(ChatColor.GREEN + " /addchan [-l] <channel> " + ChatColor.WHITE + "- Create and join a channel");      
       sender.sendMessage(ChatColor.GREEN + " /delchan <channel> " + ChatColor.WHITE + "- Delete a channel you own");
       sender.sendMessage(ChatColor.GREEN + " /joinchan <channel> " + ChatColor.WHITE + "- Join or set channel as active");
-      sender.sendMessage(ChatColor.GREEN + " /partchan <channel> " + ChatColor.WHITE + "- Leave a channel");
+      sender.sendMessage(ChatColor.GREEN + " /leavechan <channel> " + ChatColor.WHITE + "- Leave a channel");
       sender.sendMessage(ChatColor.GREEN + " /topic <channel> <topic> " + ChatColor.WHITE + "- Set a channel topic");
       if (sender.hasPermission("scc.spychan")) {
         sender.sendMessage(ChatColor.GREEN + " /spychan [channel] " + ChatColor.WHITE + "- Spy on all or a specific channel");
