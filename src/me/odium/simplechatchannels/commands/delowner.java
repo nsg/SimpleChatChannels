@@ -29,9 +29,9 @@ public class delowner implements CommandExecutor {
         return true;
       }
       String ChanName = args[0].toLowerCase();
-      String PlayerName = player.getName().toLowerCase();
+      String PlayerName = args[1].toLowerCase();
       List<String> ChowList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
-      if (player == null || ChowList.contains(PlayerName) && player.hasPermission("scc.admin")) {
+      if (ChowList.contains(PlayerName) || player.hasPermission("scc.admin")) {
         String AddPlayName = plugin.myGetPlayerName(args[1]);
         Player target = plugin.getServer().getPlayer(args[1]);
         boolean ChanTemp = plugin.getStorageConfig().contains("Channels."+ChanName);

@@ -20,6 +20,10 @@ commands:
       description: Join an unlocked channel
       permission: scc.join
       usage: /joinchan <channelname>
+   modchan:
+      description: Modify a Channel
+      permission:
+      usage: /modchan <channelname> <setting>
    partchan:
       aliases: [leavechan]
       description: Part the channel you're in

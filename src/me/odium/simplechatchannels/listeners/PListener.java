@@ -31,7 +31,7 @@ public class PListener implements Listener {
   
     // Use PersistentChannels to find the channels to part from
     if (plugin.getStorageConfig().contains("PersistentChannels")) {
-      List<String> persistentPlayerChannels = plugin.getStorageConfig().getStringList("PersistentChannels." + player.getName());
+      List<String> persistentPlayerChannels = plugin.getStorageConfig().getStringList("PersistentChannels." + player.getName().toLowerCase());
       for (String channel : persistentPlayerChannels) {
         plugin.partChannel(player, channel);
       }
@@ -52,6 +52,7 @@ public class PListener implements Listener {
     if (plugin.hasMsgLock(player)) {
       Player mlock = plugin.getMsgLock(player);
       mlock.sendMessage(ChatColor.GOLD + "[" + player.getName() + " -> " + mlock.getName() + "] " + ChatColor.WHITE + message);
+      player.sendMessage(ChatColor.GOLD + "[" + player.getName() + " -> " + mlock.getName() + "] " + ChatColor.WHITE + message);
       chat.setCancelled(true);
       return;
     }

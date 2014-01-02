@@ -35,7 +35,7 @@ public class addowner implements CommandExecutor {
       PlayerName = "Console";
     }
     List<String> ChowList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
-    if (player == null || ChowList.contains(PlayerName) && player.hasPermission("scc.admin")) {
+    if (ChowList.contains(PlayerName) || player.hasPermission("scc.admin")) {
       String AddPlayName = plugin.myGetPlayerName(args[1]).toLowerCase();
       boolean ChanTemp = plugin.getStorageConfig().contains("Channels."+ChanName);
       if(ChanTemp == false) {

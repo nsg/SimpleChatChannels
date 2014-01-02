@@ -41,7 +41,7 @@ public class adduser implements CommandExecutor {
     
     
     List<String> ChowList = plugin.getStorageConfig().getStringList("Channels."+ChanName+".owner");
-    if (player != null && !ChowList.contains(PlayerName) && !player.hasPermission("scc.admin") ) {
+    if (!ChowList.contains(PlayerName) || !player.hasPermission("scc.admin") ) {
       plugin.NotOwner(sender, ChanName);
       return true;
     }

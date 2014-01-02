@@ -26,6 +26,7 @@ import me.odium.simplechatchannels.commands.spychan;
 import me.odium.simplechatchannels.commands.topic;
 import me.odium.simplechatchannels.commands.Global;
 import me.odium.simplechatchannels.commands.Msg;
+import me.odium.simplechatchannels.commands.ModChan;
 import me.odium.simplechatchannels.listeners.PListener;
 
 import org.bukkit.Bukkit;
@@ -142,6 +143,7 @@ public class Loader extends JavaPlugin {
     this.getCommand("spychan").setExecutor(new spychan(this));
     this.getCommand("global").setExecutor(new Global(this));
     this.getCommand("msg").setExecutor(new Msg(this));
+    this.getCommand("modchan").setExecutor(new ModChan(this));
 
     cleanOldDecayedChannels();
     
@@ -272,23 +274,25 @@ public class Loader extends JavaPlugin {
   }
   
   public void setPersistentPlayerChannels(String playerName, String channel) {
+    String player = playerName.toLowerCase();
     if (!getStorageConfig().contains("PersistentChannels")) {
       getStorageConfig().createSection("PersistentChannels");
     }
-    List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + playerName);
+    List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + player);
     if (!persistentPlayerChannels.contains(channel)) {
       persistentPlayerChannels.add(channel);
-      getStorageConfig().set("PersistentChannels." + playerName, persistentPlayerChannels);
+      getStorageConfig().set("PersistentChannels." + player, persistentPlayerChannels);
       saveStorageConfig();
     }
   }
 
   public void removePersistentPlayerChannels(String playerName, String channel) {
+    String player = playerName.toLowerCase();
     if (getStorageConfig().contains("PersistentChannels")) {
-      List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + playerName);
+      List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + player);
       if (persistentPlayerChannels.contains(channel)) {
         persistentPlayerChannels.remove(channel);
-        getStorageConfig().set("PersistentChannels." + playerName, persistentPlayerChannels);
+        getStorageConfig().set("PersistentChannels." + player, persistentPlayerChannels);
         saveStorageConfig();
       }
     }
@@ -296,7 +300,7 @@ public class Loader extends JavaPlugin {
   
   public void loadPersistentPlayerChannels(Player player) {
     if (getStorageConfig().contains("PersistentChannels")) {
-      List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + player.getName());
+      List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + player.getName().toLowerCase());
       for (String channel : persistentPlayerChannels) {
         joinChannel(player, channel, false);
       }
@@ -314,7 +318,7 @@ public class Loader extends JavaPlugin {
       Entry<String,Object> itv = it.next();
       String channel = itv.getKey();
       int channelUsage = getStorageConfig().getInt("Channels."+channel + ".Usage");
-      int oneFortnight = 60; //86400 * 14;
+      int oneFortnight = 86400 * 14;
       int timeStamp = (int) (System.currentTimeMillis() / 1000L);
       log.info("cleanOldDecayedChannels: Check " + channel + "; usage: " + channelUsage);
       

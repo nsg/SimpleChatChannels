@@ -43,6 +43,7 @@ public class Msg implements CommandExecutor {
       
       String message = sb.toString().trim();
       toplayer.sendMessage(ChatColor.GOLD + "[" + sender.getName() + " -> " + toplayer.getName() + "] " + ChatColor.WHITE + message);
+      sender.sendMessage(ChatColor.GOLD + "[" + sender.getName() + " -> " + toplayer.getName() + "] " + ChatColor.WHITE + message);
     } else {
       plugin.setMsgLockTo((Player)sender,toplayer);
       sender.sendMessage(ChatColor.GOLD + "All messages will be sent to " + toplayer.getName() + ", type /msg to cancel");
