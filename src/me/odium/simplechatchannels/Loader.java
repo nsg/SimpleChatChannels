@@ -147,6 +147,7 @@ public class Loader extends JavaPlugin {
 
     cleanOldDecayedChannels();
     
+    lockMsgTo = new HashMap<Player, Player>();
     plugin = this;
 
     log.info("[" + getDescription().getName() + "] " + getDescription().getVersion() + " enabled.");
@@ -314,6 +315,9 @@ public class Loader extends JavaPlugin {
     if (getStorageConfig().contains("PersistentChannels")) {
       List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + player.getName().toLowerCase());
       for (String channel : persistentPlayerChannels) {
+        if(getStorageConfig().getBoolean("Channels."+channel+".Locked") && !getStorageConfig().getStringList("Channels."+channel+".AccList").contains(player.getName().toLowerCase())) {
+            continue;
+        }
         joinChannel(player, channel, false);
       }
     }
@@ -378,7 +382,6 @@ public class Loader extends JavaPlugin {
   }
   
   public void setMsgLockTo(Player player, Player toplayer) {
-    lockMsgTo = new HashMap<Player, Player>();
     lockMsgTo.put(player, toplayer);
   }
 
