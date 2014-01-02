@@ -297,7 +297,19 @@ public class Loader extends JavaPlugin {
       }
     }
   }  
-  
+
+  public void removePersistentChannel(String channel) {
+    if (getStorageConfig().contains("PersistentChannels")) {
+      Map<String,Object> persistentPlayers = getStorageConfig().getConfigurationSection("PersistentChannels").getValues(false);
+      Iterator<Entry<String, Object>> it = persistentPlayers.entrySet().iterator();
+      while(it.hasNext()) {
+        Entry<String,Object> itv = it.next();
+        String player = itv.getKey();
+        removePersistentPlayerChannels(player, channel);
+      }
+    }
+  }  
+
   public void loadPersistentPlayerChannels(Player player) {
     if (getStorageConfig().contains("PersistentChannels")) {
       List<String> persistentPlayerChannels = getStorageConfig().getStringList("PersistentChannels." + player.getName().toLowerCase());
