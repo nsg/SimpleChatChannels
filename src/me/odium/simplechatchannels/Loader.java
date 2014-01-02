@@ -25,6 +25,7 @@ import me.odium.simplechatchannels.commands.scc;
 import me.odium.simplechatchannels.commands.spychan;
 import me.odium.simplechatchannels.commands.topic;
 import me.odium.simplechatchannels.commands.Global;
+import me.odium.simplechatchannels.commands.Msg;
 import me.odium.simplechatchannels.listeners.PListener;
 
 import org.bukkit.Bukkit;
@@ -52,11 +53,12 @@ public class Loader extends JavaPlugin {
   public ChatColor GRAY = ChatColor.GRAY;
   public ChatColor GOLD = ChatColor.GOLD;
 
-
   public Map<Player, String> ChannelMap = new HashMap<Player, String>();
   public Map<Player, Boolean> InChannel = new HashMap<Player, Boolean>();
   public Map<Player, String> SpyMap = new HashMap<Player, String>();
   public int overRide = 0;
+  
+  private Map<Player, Player> lockMsgTo = null;
 
   // Custom Config  
   private FileConfiguration StorageConfig = null;
@@ -139,6 +141,7 @@ public class Loader extends JavaPlugin {
     this.getCommand("topic").setExecutor(new topic(this));
     this.getCommand("spychan").setExecutor(new spychan(this));
     this.getCommand("global").setExecutor(new Global(this));
+    this.getCommand("msg").setExecutor(new Msg(this));
 
     cleanOldDecayedChannels();
     
@@ -350,6 +353,24 @@ public class Loader extends JavaPlugin {
     return true;
   }
 
+  public boolean hasMsgLock(Player player) {
+    if (lockMsgTo == null) {
+      return false;
+    }
+    
+    return lockMsgTo.containsKey(player);
+  }
+  
+  public void setMsgLockTo(Player player, Player toplayer) {
+    lockMsgTo = new HashMap<Player, Player>();
+    lockMsgTo.put(player, toplayer);
+  }
 
+  public Player getMsgLock(Player player) {
+    return lockMsgTo.get(player);
+  }
+  public void clearMsgLock(Player player) {
+    lockMsgTo.remove(player);
+  }
 
 }

@@ -12,4 +12,4 @@
 # ChatPrefix - Define the chat prefix for users in a channel
 #
 ChatPrefix:
-  Prefix: '`2[`g`channel`2/`c`player`2]`w'
+  Prefix: '`2[#`channel`2] <`player`2>`w'
