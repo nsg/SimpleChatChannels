@@ -18,7 +18,7 @@ import me.odium.simplechatchannels.commands.delowner;
 import me.odium.simplechatchannels.commands.deluser;
 import me.odium.simplechatchannels.commands.joinchan;
 import me.odium.simplechatchannels.commands.kuser;
-import me.odium.simplechatchannels.commands.partchan;
+import me.odium.simplechatchannels.commands.leavechan;
 import me.odium.simplechatchannels.commands.scc;
 import me.odium.simplechatchannels.commands.spychan;
 import me.odium.simplechatchannels.commands.topic;
@@ -131,7 +131,7 @@ public class Loader extends JavaPlugin {
     this.getCommand("deluser").setExecutor(new deluser(this));
     this.getCommand("joinchan").setExecutor(new joinchan(this));
     this.getCommand("kuser").setExecutor(new kuser(this));
-    this.getCommand("partchan").setExecutor(new partchan(this));
+    this.getCommand("leavechan").setExecutor(new leavechan(this));
     this.getCommand("scc").setExecutor(new scc(this));
     this.getCommand("topic").setExecutor(new topic(this));
     this.getCommand("spychan").setExecutor(new spychan(this));
